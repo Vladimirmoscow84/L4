@@ -1,8 +1,7 @@
 
 # GO Утилита анализа GC и памяти (runtime, профилирование)
 
-![Go Version](https://img.shields.io/badge/Go-1.23+-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![Go Version](https://img.shields.io/badge/Go-1.25+-blue)
 ![Prometheus](https://img.shields.io/badge/Prometheus-exporter-orange)
 ![Gin](https://img.shields.io/badge/Gin--framework-Enabled-purple)
 
