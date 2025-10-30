@@ -20,17 +20,20 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"runtime"
 	"runtime/debug"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	wbconfig "github.com/wb-go/wbf/config"
 )
 
-//Определение метрик для сбора информации
-
+// Определение метрик для сбора информации
 var (
 	//heapAlloc - метрика текущего объема памяти в куче
 	heapAlloc = prometheus.NewGaugeFunc(
@@ -184,4 +187,43 @@ func gcHandler(c *gin.Context) {
 	c.String(http.StatusOK, "Установлено новое значение GOGC = %d\n Предыдущее значение GOGC = %d", val, previos)
 }
 
-func main() {}
+func main() {
+	cfg := wbconfig.New()
+	err := cfg.LoadEnvFiles(".env")
+	if err != nil {
+		log.Fatalf("[main] ошибка загрузки cfg %v", err)
+	}
+	addr := cfg.GetString("ADDR")
+	gogcDefault := cfg.GetInt("GOGC_DEFAULT")
+
+	debug.SetGCPercent(gogcDefault)
+
+	r := gin.New()
+	r.Use(gin.Logger(), gin.Recovery())
+
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	r.GET("/gc", gcHandler)
+	r.GET("/debug/pprof/*any", gin.WrapH(http.DefaultServeMux))
+
+	log.Println("[main]Утилита по сборке информации по GC запущена")
+
+	go func() {
+		for range time.Tick(10 * time.Second) {
+			var ms runtime.MemStats
+			runtime.ReadMemStats(&ms)
+			log.Printf("heap=%d KB, sys=%d KB, num_gc=%d, goroutines=%d",
+				ms.HeapAlloc/1024, ms.HeapSys/1024, ms.NumGC, runtime.NumGoroutine())
+		}
+	}()
+
+	log.Printf("[main] Сервер будет слушать на %q", addr)
+
+	if addr == "" {
+		addr = ":9100"
+		log.Println("[main] Переменная ADDR не найдена, используется значение по умолчанию :9100")
+	}
+	err = r.Run(addr)
+	if err != nil && err != http.ErrServerClosed {
+		log.Fatalf("[main]Ошибка запуска сервера: %v", err)
+	}
+}
