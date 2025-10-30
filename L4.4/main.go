@@ -170,18 +170,18 @@ func gcHandler(c *gin.Context) {
 		current := debug.SetGCPercent(-1)
 		_ = debug.SetGCPercent(current)
 
-		c.string(http.StatusOK, "Значение CG в текущий момент = %d", current)
+		c.String(http.StatusOK, "Значение CG в текущий момент = %d", current)
 		return
 	}
 
 	val, err := strconv.Atoi(set)
 	if err != nil {
-		c.string(http.StatusBadRequest, "Некоректное значение параметра 'set'")
+		c.String(http.StatusBadRequest, "Некоректное значение параметра 'set'")
 		return
 	}
 
 	previos := debug.SetGCPercent(val)
-	c.string(http.StatusOK, "Установлено новое значение GOGC = %d\n Предыдущее значение GOGC = %d", val, previos)
+	c.String(http.StatusOK, "Установлено новое значение GOGC = %d\n Предыдущее значение GOGC = %d", val, previos)
 }
 
 func main() {}
