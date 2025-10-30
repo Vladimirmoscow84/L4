@@ -18,12 +18,12 @@
 
 ## Возможности
 
-- 📊 Метрики памяти (`runtime.ReadMemStats`)
-- ⚙️ Управление параметром GC (`debug.SetGCPercent`)
-- 🧩 Профилирование через `pprof`
-- 🧵 Подсчёт активных горутин
-- 🧠 Экспорт в формате **Prometheus**
-- 💬 REST API на **Gin**
+- Метрики памяти (`runtime.ReadMemStats`)
+- Управление параметром GC (`debug.SetGCPercent`)
+- Профилирование через `pprof`
+- Подсчёт активных горутин
+- Экспорт в формате **Prometheus**
+- REST API на **Gin**
 
 ---
 
@@ -97,7 +97,7 @@ go tool pprof http://localhost:9100/debug/pprof/profile?seconds=30
 heap=5200 KB, sys=10240 KB, num_gc=15, goroutines=9
 heap=5230 KB, sys=10400 KB, num_gc=16, goroutines=9
 
-Go GC & Memory Exporter
+GO Утилита анализа GC и памяти (runtime, профилирование)
 Автор: <Vladimirmoscow84>
 📧 Контакт: <ccr1@yandex.ru.  https://github.com/Vladimirmoscow84 >
 🌐 GitHub: https://github.com/Vladimirmoscow84/L4/tree/main/L4.4
