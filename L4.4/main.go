@@ -135,9 +135,9 @@ func main() {
 		)
 
 		//goroutines - метрика количества активных горутин
-		goroutines = prometheus.NewGaugeFunc(
+		numGoroutines = prometheus.NewGaugeFunc(
 			prometheus.GaugeOpts{
-				Name: "go_goroutines",
+				Name: "num_goroutines",
 				Help: "количество активных горутин",
 			},
 			func() float64 {
