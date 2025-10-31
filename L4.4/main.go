@@ -193,6 +193,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("[main] ошибка загрузки cfg %v", err)
 	}
+	cfg.EnableEnv("")
 	addr := cfg.GetString("ADDR")
 	gogcDefault := cfg.GetInt("GOGC_DEFAULT")
 
