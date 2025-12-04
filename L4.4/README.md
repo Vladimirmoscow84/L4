@@ -83,11 +83,11 @@ num_goroutines 9
 
 Профилирование (pprof)
 Эндпоинты доступны по адресу:
-| Тип профиля     | URL                                                                          |
-| --------------- | ---------------------------------------------------------------------------- |
-| Список профилей | [/debug/pprof/](http://localhost:9100/debug/pprof/)                          |
-| CPU-профиль     | [/debug/pprof/profile](http://localhost:9100/debug/pprof/profile?seconds=30) |
-| Память (heap)   | [/debug/pprof/heap](http://localhost:9100/debug/pprof/heap)                  |
+| Тип профиля     | URL                                                                          
+| --------------- | ---------------------------------------------------------------------------- 
+| Список профилей | http://localhost:9100/debug/pprof/                         
+| CPU-профиль     | http://localhost:9100/debug/pprof/profile?seconds=30
+| Память (heap)   | http://localhost:9100/debug/pprof/heap                
 
 Пример команды:
 go tool pprof http://localhost:9100/debug/pprof/profile?seconds=30
@@ -99,5 +99,5 @@ heap=5230 KB, sys=10400 KB, num_gc=16, goroutines=9
 
 GO Утилита анализа GC и памяти (runtime, профилирование)
 Автор: <Vladimirmoscow84>
-📧 Контакт: <ccr1@yandex.ru.  https://github.com/Vladimirmoscow84 >
+📧 Контакт: ccr1@yandex.ru.  https://github.com/Vladimirmoscow84
 🌐 GitHub: https://github.com/Vladimirmoscow84/L4/tree/main/L4.4
