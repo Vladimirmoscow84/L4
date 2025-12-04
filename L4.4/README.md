@@ -37,7 +37,7 @@ GOGC_DEFAULT=100
 
 Установка и запуск
 1. Клонировать репозиторий
-git clone https://github.com/<your-username>/go-gc-exporter.git
+git clone https://github.com/vladimirmoscow84/go-gc-exporter.git
 cd go-gc-exporter
 
 2. Установить зависимости
