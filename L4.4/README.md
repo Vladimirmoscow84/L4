@@ -37,8 +37,8 @@ GOGC_DEFAULT=100
 
 Установка и запуск
 1. Клонировать репозиторий
-git clone https://github.com/vladimirmoscow84/go-gc-exporter.git
-cd go-gc-exporter
+git clone https://github.com/Vladimirmoscow84/L4.git
+cd L4/L4.4
 
 2. Установить зависимости
 go mod tidy
