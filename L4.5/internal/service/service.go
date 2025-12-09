@@ -1,0 +1,71 @@
+package service
+
+import (
+	"time"
+
+	"L4.5/internal/model"
+)
+
+type Statistic struct{}
+
+func New() *Statistic {
+	return &Statistic{}
+}
+
+func (s *Statistic) GetStats(nums model.Numbers) model.Response {
+	start := time.Now()
+
+	count := len(nums.Data)
+
+	var sum float64
+	for _, v := range nums.Data {
+		sum += v
+	}
+
+	avg := 0.0
+	if count > 0 {
+		avg = sum / float64(count)
+	}
+
+	sorted := make([]float64, count)
+	copy(sorted, nums.Data)
+	sortedNums := quickSort(sorted)
+
+	median := 0.0
+	if count > 0 {
+		mid := count / 2
+		if count%2 == 0 {
+			median = (sortedNums[mid-1] + sortedNums[mid]) / 2
+		} else {
+			median = sortedNums[mid]
+		}
+	}
+	_ = time.Since(start).Milliseconds()
+
+	return model.Response{
+		Sum:    sum,
+		Avg:    avg,
+		Median: median,
+		Sorted: sortedNums,
+		Count:  count,
+	}
+
+}
+
+func quickSort(slice []float64) []float64 {
+	if len(slice) < 2 {
+		return slice
+	}
+	pivot := slice[0]
+	var lower, greater []float64
+	for _, v := range slice[1:] {
+		if v <= pivot {
+			lower = append(lower, v)
+		} else {
+			greater = append(greater, v)
+		}
+	}
+	answer := append(quickSort(lower), pivot)
+	answer = append(answer, quickSort(greater)...)
+	return answer
+}
