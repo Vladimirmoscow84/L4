@@ -12,7 +12,7 @@ func New() *Statistic {
 	return &Statistic{}
 }
 
-func (s *Statistic) GetStats(nums model.Numbers) model.Response {
+func (s *Statistic) GetStats(nums model.Numbers) *model.Response {
 	start := time.Now()
 
 	count := len(nums.Data)
@@ -42,7 +42,7 @@ func (s *Statistic) GetStats(nums model.Numbers) model.Response {
 	}
 	_ = time.Since(start).Milliseconds()
 
-	return model.Response{
+	return &model.Response{
 		Sum:    sum,
 		Avg:    avg,
 		Median: median,
