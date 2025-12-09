@@ -1,1 +1,73 @@
 curl -X POST http://localhost:6767/stats -H "Content-Type: application/json" -d '{"data":[5,2,10,7]}'
+
+запуск бенчмарков
+mac@MacBook-Pro-Mac L4.5 % go test -bench=. -benchmem -cpuprofile cpu.out ./internal/service
+PASS
+ok      L4.5/internal/service   1.045s
+
+
+go tool pprof cpu.out
+File: service.test
+Type: cpu
+Time: 2025-12-10 01:04:19 MSK
+Duration: 202.29ms, Total samples = 0 
+No samples were found with the default sample value type.
+Try "sample_index" command to analyze different sample values.
+Entering interactive mode (type "help" for commands, "o" for options)
+
+
+mac@MacBook-Pro-Mac L4.5 % go test -bench=. -benchmem -memprofile mem.out ./internal/service
+PASS
+ok      L4.5/internal/service   0.036s
+
+go tool pprof mem.out
+File: service.test
+Type: alloc_space
+Time: 2025-12-10 01:07:51 MSK
+Entering interactive mode (type "help" for commands, "o" for options)
+(pprof) o
+  call_tree                 = false                
+  compact_labels            = true                 
+  divide_by                 = 1                    
+  drop_negative             = false                
+  edgefraction              = 0.001                
+  focus                     = ""                   
+  granularity               = (default)            //: [addresses | filefunctions | files | functions | lines]
+  hide                      = ""                   
+  ignore                    = ""                   
+  intel_syntax              = false                
+  mean                      = false                
+  nodecount                 = -1                   //: default
+  nodefraction              = 0.005                
+  noinlines                 = false                
+  normalize                 = false                
+  output                    = ""                   
+  prune_from                = ""                   
+  relative_percentages      = false                
+  sample_index              = inuse_space          //: [alloc_objects | alloc_space | inuse_objects | inuse_space]
+  show                      = ""                   
+  show_from                 = ""                   
+  showcolumns               = false                
+  sort                      = flat                 //: [cum | flat]
+  tagfocus                  = ""                   
+  taghide                   = ""                   
+  tagignore                 = ""                   
+  tagleaf                   = ""                   
+  tagroot                   = ""                   
+  tagshow                   = ""                   
+  trim                      = true                 
+  trim_path                 = ""                   
+  unit                      = minimum              
+(pprof) 
+
+
+
+mac@MacBook-Pro-Mac L4.5 % go test -bench=. -run ^$ -trace trace.out ./internal/service
+PASS
+ok      L4.5/internal/service   0.881s
+
+
+mac@MacBook-Pro-Mac L4.5 % go tool trace trace.out
+2025/12/10 01:10:14 Preparing trace for viewer...
+2025/12/10 01:10:14 Splitting trace for viewer...
+2025/12/10 01:10:14 Opening browser. Trace viewer is listening on http://127.0.0.1:51436
