@@ -37,4 +37,11 @@ func (r *Router) Routes() {
 	r.Engine.GET("/debug/pprof/profile", func(c *ginext.Context) { pprof.Profile(c.Writer, c.Request) })
 	r.Engine.GET("/debug/pprof/symbol", func(c *ginext.Context) { pprof.Symbol(c.Writer, c.Request) })
 	r.Engine.GET("/debug/pprof/trace", func(c *ginext.Context) { pprof.Trace(c.Writer, c.Request) })
+
+	// ключевые профили
+	r.Engine.GET("/debug/pprof/heap", func(c *ginext.Context) { pprof.Handler("heap").ServeHTTP(c.Writer, c.Request) })
+	r.Engine.GET("/debug/pprof/goroutine", func(c *ginext.Context) { pprof.Handler("goroutine").ServeHTTP(c.Writer, c.Request) })
+	r.Engine.GET("/debug/pprof/threadcreate", func(c *ginext.Context) { pprof.Handler("threadcreate").ServeHTTP(c.Writer, c.Request) })
+	r.Engine.GET("/debug/pprof/block", func(c *ginext.Context) { pprof.Handler("block").ServeHTTP(c.Writer, c.Request) })
+	r.Engine.GET("/debug/pprof/mutex", func(c *ginext.Context) { pprof.Handler("mutex").ServeHTTP(c.Writer, c.Request) })
 }
