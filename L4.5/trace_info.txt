@@ -1,0 +1,33 @@
+
+go test -bench=. -benchmem -benchtime=5s -trace trace.out ./internal/service
+|
+|__goos: darwin
+goarch: amd64
+pkg: L4.5/internal/service
+cpu: Intel(R) Core(TM) i5-7267U CPU @ 3.10GHz
+BenchmarkGetStatsSmall-4        17661380               333.3 ns/op           144 B/op            2 allocs/op
+BenchmarkGetStatsBig-4               368          14389305 ns/op         2007840 B/op            8 allocs/op
+PASS
+ok      L4.5/internal/service   17.041s
+
+go tool trace trace.out
+|
+|__ информация с файла trace.out в барузере http://127.0.0.1:51408/
+
+ пример:
+ Goroutines
+Below is a table of all goroutines in the trace grouped by start location and sorted by the total execution time of the group.
+
+Click a start location to view more details about that group.
+
+Start location	Count	Total execution time
+testing.(*B).launch	2	15.784253754s
+runtime.gcBgMarkWorker	4	1.11822926s
+testing.(*B).run1.func1	2	264.573824ms
+runtime.bgsweep	1	201.521583ms
+runtime.bgscavenge	1	67.581061ms
+runtime.(*traceAdvancerState).start.func1	1	28.459008ms
+runtime.traceStartReadCPU.func1	1	999.232µs
+main.main	1	927.809µs
+runtime/trace.(*traceMultiplexer).startLocked.func1	1	436.796µs
+(Inactive, no stack trace sampled)	3	0s
