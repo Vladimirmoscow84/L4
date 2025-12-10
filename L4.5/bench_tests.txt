@@ -1,21 +1,65 @@
-go test -bench=. -benchmem -cpuprofile cpu.out ./internal/service
+go test -bench=. -benchmem -benchtime=5s -cpuprofile cpu.out ./internal/service
 |
-|__PASS
-ok      L4.5/internal/service   2.011s
+|__goos: darwin
+goarch: amd64
+pkg: L4.5/internal/service
+cpu: Intel(R) Core(TM) i5-7267U CPU @ 3.10GHz
+BenchmarkGetStatsSmall-4         2225539              2632 ns/op            1544 B/op           50 allocs/op
+BenchmarkGetStatsBig-4                 1        24981398895 ns/op       66498783544 B/op   1457112 allocs/op
+PASS
+ok      L4.5/internal/service   39.556s
 
 
 go tool pprof cpu.out
 |
 |__File: service.test
+File: service.test
 Type: cpu
-Time: 2025-12-10 12:48:49 MSK
-Duration: 205.27ms, Total samples = 0 
-No samples were found with the default sample value type.
-Try "sample_index" command to analyze different sample values.
+Time: 2025-12-10 12:58:27 MSK
+Duration: 38.75s, Total samples = 37.33s (96.34%)
 Entering interactive mode (type "help" for commands, "o" for options)
 (pprof)
 |
 |__top
         |
-        |__Showing nodes accounting for 0, 0% of 0 total
+        |__Showing nodes accounting for 25480ms, 68.26% of 37330ms total
+Dropped 190 nodes (cum <= 186.65ms)
+Showing top 10 nodes out of 121
       flat  flat%   sum%        cum   cum%
+    6740ms 18.06% 18.06%     6740ms 18.06%  runtime.madvise
+    4040ms 10.82% 28.88%     4040ms 10.82%  runtime.kevent
+    3160ms  8.47% 37.34%     3160ms  8.47%  runtime.memmove
+    2710ms  7.26% 44.60%    12490ms 33.46%  L4.5/internal/service.quickSort
+    2290ms  6.13% 50.74%     2290ms  6.13%  runtime.pthread_cond_wait
+    1660ms  4.45% 55.18%     1660ms  4.45%  runtime.pthread_kill
+    1530ms  4.10% 59.28%     1530ms  4.10%  runtime.pthread_cond_signal
+    1530ms  4.10% 63.38%     1530ms  4.10%  runtime.usleep
+     990ms  2.65% 66.03%     8660ms 23.20%  runtime.growslice
+     830ms  2.22% 68.26%      830ms  2.22%  runtime.(*stackScanState).putPtr
+
+-----!!!Пояснение!!!-----
+2710ms  7.26% 44.60%    12490ms 33.46%  L4.5/internal/service.quickSort 
+-слабое место из-за рекурсивной сортировки, которая создает много слайсов и аллоцирует память и копирует данные
+
+ 990ms  2.65% 66.03%     8660ms 23.20%  runtime.growslice
+ -  функция быстрой сортировки. quickSort делает много аппендов, создавая новые слайсы и увеличивая capacity
+
+3160ms  8.47% 37.34%     3160ms  8.47%  runtime.memmove
+- много копирования памяти из-за аппендов в быстрой сортировке
+
+6740ms 18.06% 18.06%     6740ms 18.06%  runtime.madvise
+4040ms 10.82% 28.88%     4040ms 10.82%  runtime.kevent
+2290ms  6.13% 50.74%     2290ms  6.13%  runtime.pthread_cond_wait
+1660ms  4.45% 55.18%     1660ms  4.45%  runtime.pthread_kill
+1530ms  4.10% 59.28%     1530ms  4.10%  runtime.pthread_cond_signal
+- системные вызовы(не критично), но ресурсы жрут
+
+ВЫВОД по первому(неоптимальному варианту)
+- основной проблемой сервиса является функция quickSort:
+    -рекурсивная,   
+    -делает append в новые слайсы,
+    -вызывает регулярные realloc (growslice),
+    -создаёт огромные объёмы копирования (memmove).
+
+Решение - преейти на стандартную функцию из пакета sort
+- sort.Float64 - скорость сортировки должна ускориться примерно в 5-10 раз

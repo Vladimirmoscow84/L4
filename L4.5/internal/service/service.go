@@ -1,6 +1,7 @@
 package service
 
 import (
+	"sort"
 	"time"
 
 	"L4.5/internal/model"
@@ -29,29 +30,45 @@ func (s *Statistic) GetStats(nums model.Numbers) *model.Response {
 
 	sorted := make([]float64, count)
 	copy(sorted, nums.Data)
-	sortedNums := quickSort(sorted)
+	//До оптимизации
+	//sortedNums := quickSort(sorted)
+	sort.Float64s(sorted)
+
+	//До оптимизации
+	// median := 0.0
+	// if count > 0 {
+	// 	mid := count / 2
+	// 	if count%2 == 0 {
+	// 		median = (sortedNums[mid-1] + sortedNums[mid]) / 2
+	// 	} else {
+	// 		median = sortedNums[mid]
+	// 	}
+	// }
 
 	median := 0.0
 	if count > 0 {
 		mid := count / 2
 		if count%2 == 0 {
-			median = (sortedNums[mid-1] + sortedNums[mid]) / 2
+			median = (sorted[mid-1] + sorted[mid]) / 2
 		} else {
-			median = sortedNums[mid]
+			median = sorted[mid]
 		}
 	}
+
 	_ = time.Since(start).Milliseconds()
 
 	return &model.Response{
 		Sum:    sum,
 		Avg:    avg,
 		Median: median,
-		Sorted: sortedNums,
+		//Sorted: sortedNums,  - до потимизации
+		Sorted: sorted,
 		Count:  count,
 	}
 
 }
 
+// quickSort - функция быстрой сортировки слайса до оптимизации
 func quickSort(slice []float64) []float64 {
 	if len(slice) < 2 {
 		return slice
