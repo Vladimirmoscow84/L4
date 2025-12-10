@@ -1,0 +1,21 @@
+go test -bench=. -benchmem -cpuprofile cpu.out ./internal/service
+|
+|__PASS
+ok      L4.5/internal/service   2.011s
+
+
+go tool pprof cpu.out
+|
+|__File: service.test
+Type: cpu
+Time: 2025-12-10 12:48:49 MSK
+Duration: 205.27ms, Total samples = 0 
+No samples were found with the default sample value type.
+Try "sample_index" command to analyze different sample values.
+Entering interactive mode (type "help" for commands, "o" for options)
+(pprof)
+|
+|__top
+        |
+        |__Showing nodes accounting for 0, 0% of 0 total
+      flat  flat%   sum%        cum   cum%
